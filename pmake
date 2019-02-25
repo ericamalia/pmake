@@ -3,4 +3,21 @@
 use strict;
 use warnings;
 
+#open file
+for my $filename (@ARGV) {
+	open my $file, "<$filename" or warn "$0: $filename: $!\n" and next;
+	while (defined (my $line = <$file>)) {
+		unless($line =~ /^\s*$/) {
+			chomp($line);
+			print $line, "\n";
+		}
+		
+	}
+#read lines while defined,
+#if line compare to whitespace is true, ignore
+#if trimmed and substring(0,1) = # OR use split string and check a[0], ignore
 
+
+#MACROS
+	close $file;
+}
