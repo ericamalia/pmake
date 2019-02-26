@@ -15,6 +15,7 @@ for my $filename (@ARGV) {
 		}
 		ltrim($line);
 		my @words = split ' ', $line;
+		# /\s+/ one or more whitespace.. 
 		#if words[0] is # ignore line 	
 		
 	}
