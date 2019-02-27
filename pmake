@@ -5,16 +5,25 @@ use warnings;
 
 #open file
 sub ltrim { my $s = shift; $s =~ s/^\s+//; return $s };
+my %target;
 
+# go through file once, store target with its prereqs and its commands into a hash
+# Then, make the target and recursively call its prereqs by looking through the hashtable.
+#
 for my $filename (@ARGV) {
 	open my $file, "<$filename" or warn "$0: $filename: $!\n" and next;
 	while (defined (my $line = <$file>)) {
 		unless($line =~ /^\s*$/) {
 			chomp($line);
-			print $line, "\n";
+			ltrim($line);
+			my @words = split /\s+/, $line;
+			unless($words[0] eq "#"){
+				if($words[1] eq ":"){
+					$target{word[0]} = word[2...-1];		
+				}
+				print ($line, "\n");
+			}
 		}
-		ltrim($line);
-		my @words = split ' ', $line;
 		# /\s+/ one or more whitespace.. 
 		#if words[0] is # ignore line 	
 		
