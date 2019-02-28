@@ -1,0 +1,5 @@
+checksource: improper character \x09 = ^I (tab)
+   file "pmake": 158 errors: lines 14--43, 50--51, 55--71
+checksource: line length > 72 characters
+   file "pmake": 3 errors: lines 10--11, 46
+checksource: TOTAL COMPLAINTS: 161

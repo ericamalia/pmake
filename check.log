@@ -1,0 +1,47 @@
+++ pwd
++ PATH=/usr/lib64/qt-3.3/bin:/opt/rh/llvm-toolset-7/root/usr/bin:/opt/rh/llvm-toolset-7/root/usr/sbin:/opt/rh/devtoolset-7/root/usr/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/usr/local/texlive/2017/bin/x86_64-linux:/usr/local/codebench/bin:/afs/cats.ucsc.edu/users/j/kelxu/bin:.:/afs/cats.ucsc.edu/courses/cmps112-wm/usr/ocaml/bin:/afs/cats.ucsc.edu/courses/cmps112-wm/usr/racket/bin:/afs/cats.ucsc.edu/courses/cmps112-wm/bin/:/afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4
++ export PATH
+++ pwd
++ for dir in '$(pwd)/test*'
++ cd /afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/test0
++ pwd
+/afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/test0
++ sh mk.test
+"my" variable $i masks earlier declaration in same scope at /afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/pmake line 65.
+"my" variable $i masks earlier declaration in same scope at /afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/pmake line 65.
+"my" variable $i masks earlier declaration in same scope at /afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/pmake line 65.
+Bareword "makeTarget" not allowed while "strict subs" in use at /afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/pmake line 51.
+syntax error at /afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/pmake line 60, near "@execute:"
+syntax error at /afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/pmake line 63, near "}"
+Bareword "n" not allowed while "strict subs" in use at /afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/pmake line 32.
+Execution of /afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/pmake aborted due to compilation errors.
++ for dir in '$(pwd)/test*'
++ cd /afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/test1
++ pwd
+/afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/test1
++ sh mk.test
+rm: cannot remove ‘hello’: No such file or directory
++ for dir in '$(pwd)/test*'
++ cd /afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/test2
++ pwd
+/afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/test2
++ sh mk.test
+rm: cannot remove ‘hello’: No such file or directory
++ for dir in '$(pwd)/test*'
++ cd /afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/test3
++ pwd
+/afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/test3
++ sh mk.test
+rm: cannot remove ‘hello’: No such file or directory
++ for dir in '$(pwd)/test*'
++ cd /afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/test4
++ pwd
+/afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/test4
++ sh mk.test
+rm: cannot remove ‘hello’: No such file or directory
++ for dir in '$(pwd)/test*'
++ cd /afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/test5
++ pwd
+/afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/test5
++ sh mk.test
+rm: cannot remove ‘hello’: No such file or directory

@@ -5,12 +5,12 @@ use warnings;
 
 #open file
 sub ltrim { my $s = shift; $s =~ s/^\s+//; return $s };
-my %target;
-
+my %targets;
+my %commands;
 # go through file once, store target with its prereqs and its commands into a hash
 # Then, make the target and recursively call its prereqs by looking through the hashtable.
 #
-for my $filename (@ARGV) {
+for my $filename ($ARGV[0]) {
 	open my $file, "<$filename" or warn "$0: $filename: $!\n" and next;
 	while (defined (my $line = <$file>)) {
 		unless($line =~ /^\s*$/) {
@@ -19,9 +19,22 @@ for my $filename (@ARGV) {
 			my @words = split /\s+/, $line;
 			unless($words[0] eq "#"){
 				if($words[1] eq ":"){
-					$target{word[0]} = word[2...-1];		
+					if (@words > 2){
+						$targets{$words[0]} = $words[2...-1];		
+					}
+					my $nextline = <$file>;
+					chomp($nextline);
+					ltrim($nextline);
+					while (not ($nextline =~ /^\s*$/)){
+						if ($commands{$words[0]} eq undef){
+							$commands{$words[0]} = $nextline;
+						}else{
+								$commands{$words[0]} = $commands{$words[0]}."\n".$nextline; 
+							}
+						}
+					
 				}
-				print ($line, "\n");
+		#		print ($line, "\n");
 			}
 		}
 		# /\s+/ one or more whitespace.. 
@@ -35,4 +48,26 @@ for my $filename (@ARGV) {
 
 #MACROS
 	close $file;
+	makeTarget $ARGV[1]; 
+}
+
+sub makeTarget{
+	my $target = @_;
+	my @prereqs = $targets{$target};
+	if (@prereqs eq undef){
+		#execute the command
+		my @execute = split /"\n"/, $commands{$target};
+		for (my $i = 0; $i < @execute: $i++){
+			print STDOUT $execute[$i];
+			system($execute[$i]);
+		}
+	}else{
+		for (my $j = 0; $j < @prereqs: $j++){
+		#check if prereq is a file by checking the target hash
+		#check time stamp between target and prereq[i] if file
+		#if not file makeTarget the prereq
+			makeTarget $prereq[$j];
+		}
+	}
+
 }
