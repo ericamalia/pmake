@@ -15,29 +15,24 @@ my %commands;
 sub makeTarget{
 	my ($target) = @_;
 	my @prereqs;
+	my $prereqsExist = 1;
+	my $hashValue = $targets{$target};
 	print "my target is: $target\n";
-	print "targets at my target is: $targets{$target}\n";
-	if($targets{$target} eq ' '){  #Not exactly sure what targets{target} has when empty.. 
-		@prereqs = ' ';
+	print "hash value is: $hashValue --\n";
+	if(not (defined ($hashValue))){  #Not exactly sure what targets{target} has when empty.. 
+		print STDOUT "prereq does not exist\n";
+		$prereqsExist = 0;
 	}
 	else{
-	   @prereqs = split ' ',$targets{$target};
+		print STDOUT "prereq exists\n";
+	   @prereqs = split " ",$targets{$target};
 	}
 	
 	#for (my $k = 0; $k < @prereqs; ++$k){
 	#	print STDOUT "$k: $prereqs[$k], ";
         #}
 	#print STDOUT @prereqs;
-	
-	if (not (@prereqs)){
-		#execute the command
-		print STDOUT "prereq not defined\n";
-		my @execute = split /"\n"/, $commands{$target};
-		for (my $i = 0; $i < @execute ; ++$i){
-			print STDOUT $execute[$i];
-			system($execute[$i]);
-		}
-	}else{
+	if($prereqsExist){
 		print STDOUT "prereq defined\n";
 		for (my $j = 0; $j < @prereqs ; ++$j){
 		#check if prereq is a file by checking the target hash
@@ -46,8 +41,25 @@ sub makeTarget{
 			print STDOUT "$j: recursive call on: $prereqs[$j]\n";
 			makeTarget($prereqs[$j]);
 		}
-	}
 
+
+	}
+	
+	print STDOUT "done making prereqs\n";
+	my @execute = split /"\n"/, $commands{$target};
+	for (my $i = 0; $i < @execute ; ++$i){
+		my @parseExecute = split /\s+/ ,$execute[$i];
+	#	for (my $j = 0; $j < @parseExecute; ++$j){
+	#		print STDOUT "$j: $parseExecute[$j] ";
+#		}
+		if($parseExecute[1] eq "@"){
+			my $deleteAt = substr($execute[$i], 3);
+			system($deleteAt);
+		}else{
+			print STDOUT $execute[$i];
+			system($execute[$i]);
+		}
+	}
 }
 
 for my $targetName ($ARGV[0]) {
@@ -111,25 +123,3 @@ for my $targetName ($ARGV[0]) {
 
 #MACROS
 #	makeTarget $targetName; 
-
-
-#sub makeTarget{
-#	my $target = @_;
-#	my @prereqs = $targets{$target};
-#	if (@prereqs eq undef){
-#		#execute the command
-#		my @execute = split /"\n"/, $commands{$target};
-#		for (my $i = 0; $i < @execute ; $i++){
-#			print STDOUT $execute[$i];
-#			system($execute[$i]);
-#		}
-#	}else{
-#		for (my $j = 0; $j < @prereqs ; $j++){
-#		#check if prereq is a file by checking the target hash
-#		#check time stamp between target and prereq[i] if file
-#		#if not file makeTarget the prereq
-#			makeTarget $prereqs[$j];
-#		}
-#	}
-#
-#}
