@@ -7,7 +7,6 @@ use warnings;
 sub ltrim { my $s = shift; $s =~ s/^\s+//; return $s };
 my %targets;
 my %commands; 
-my $exitStatus = 0;
 # go through file once, store target with its prereqs and its commands into a hash
 # Then, make the target and recursively call its prereqs by looking through the hashtable.
 #
@@ -49,13 +48,12 @@ sub makeTarget{
 				my $fileTime = mtime ($prereqs[$j]);
 				my $targetTime = mtime ($target);
 				if (defined ($targetTime)){
-					if ($fileTime > $targetTime){
+				if ($fileTime > $targetTime){
 
 
-					}else{
-						#throw an error, target obsolete
-					}
-				}			
+				}else{
+					#throw an error, target obsolete
+				}			}
 			}else{
 				makeTarget($prereqs[$j]);
 			}
@@ -73,24 +71,18 @@ sub makeTarget{
 	#		print STDOUT "$j: $parseExecute[$j] ";
 #		}
 		if($parseExecute[1] eq "@"){
-			my $deleteAt = substr($execute[$i], 3);
-			system($deleteAt);
-			#check exit status and signal
-		}elsif ($parseExecute[1] eq "-"){
-			#does not exit?
-			my $deleteAt = substr($execute[$i], 3);
+				my $deleteAt = substr($execute[$i], 3);
 			system($deleteAt);
 		}else{
 			my $wor = ltrim($execute[$i]);
 			print STDOUT "$wor \n";
 			system($execute[$i]);
-			#check exit status and signal
 		}
 	}
 }
 
 for my $targetName ($ARGV[0]) {
-	open my $file, "test1/Makefile" or warn "$0: Makefile: $!\n" and next;
+	open my $file, "Makefile" or warn "$0: Makefile: $!\n" and next;
 	while (defined (my $line = <$file>)) {
 		unless($line =~ /^\s*$/) {
 		#	print STDOUT $line;

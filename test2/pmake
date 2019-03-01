@@ -90,7 +90,7 @@ sub makeTarget{
 }
 
 for my $targetName ($ARGV[0]) {
-	open my $file, "test1/Makefile" or warn "$0: Makefile: $!\n" and next;
+	open my $file, "Makefile" or warn "$0: Makefile: $!\n" and next;
 	while (defined (my $line = <$file>)) {
 		unless($line =~ /^\s*$/) {
 		#	print STDOUT $line;

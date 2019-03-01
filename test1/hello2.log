@@ -1,8 +1,1 @@
-"my" variable $i masks earlier declaration in same scope at /afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/pmake line 65.
-"my" variable $i masks earlier declaration in same scope at /afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/pmake line 65.
-"my" variable $i masks earlier declaration in same scope at /afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/pmake line 65.
-Bareword "makeTarget" not allowed while "strict subs" in use at /afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/pmake line 51.
-syntax error at /afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/pmake line 60, near "@execute:"
-syntax error at /afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/pmake line 63, near "}"
-Bareword "n" not allowed while "strict subs" in use at /afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/pmake line 32.
-Execution of /afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/pmake aborted due to compilation errors.
+gcc hello.c -o hello 

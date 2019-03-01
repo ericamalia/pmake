@@ -1,8 +1,14 @@
-"my" variable $i masks earlier declaration in same scope at /afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/pmake line 65.
-"my" variable $i masks earlier declaration in same scope at /afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/pmake line 65.
-"my" variable $i masks earlier declaration in same scope at /afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/pmake line 65.
-Bareword "makeTarget" not allowed while "strict subs" in use at /afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/pmake line 51.
-syntax error at /afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/pmake line 60, near "@execute:"
-syntax error at /afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/pmake line 63, near "}"
-Bareword "n" not allowed while "strict subs" in use at /afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/pmake line 32.
-Execution of /afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/pmake aborted due to compilation errors.
+gcc bad.c -o bad 
+bad.c:3:1: error: unknown type name ‘This’
+ This is a bad file.
+ ^~~~
+bad.c:3:9: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘a’
+ This is a bad file.
+         ^
+bad.c:3:9: error: unknown type name ‘a’
+bad.c:4:7: warning: missing terminating ' character
+ cc won't compile it.
+       ^
+bad.c:4:7: error: missing terminating ' character
+ cc won't compile it.
+       ^~~~~~~~~~~~~~
