@@ -11,45 +11,55 @@ my %commands;
 # Then, make the target and recursively call its prereqs by looking through the hashtable.
 #
 for my $targetName ($ARGV[0]) {
-	open my $file, "Makefile" or warn "$0: Makefile: $!\n" and next;
+	open my $file, "test0/Makefile" or warn "$0: Makefile: $!\n" and next;
 	while (defined (my $line = <$file>)) {
 		unless($line =~ /^\s*$/) {
+		#	print STDOUT $line;
 			chomp($line);
 			ltrim($line);
 			my @words = split /\s+/, $line;
-			unless($words[0] eq "#"){
+			print STDOUT "\n----";
+			for (my $i = 0; $i < @words; ++$i){
+				print "$i: ";
+				print STDOUT $words[$i];
+				print "--";
+			}
+			print "\n";
+			if($words[0] ne "#"){
 				if($words[1] eq ":"){
+					print STDOUT "here 3";	
 					if (@words > 2){
-						$targets{$words[0]} = $words[2...-1];		
+						$targets{$words[0]} = $words[2];		
 					}
 					my $nextline = <$file>;
 					chomp($nextline);
 					ltrim($nextline);
+					#print STDOUT "nextline is: $nextline";
 					while (not ($nextline =~ /^\s*$/)){
-						if ($commands{$words[0]} eq undef){
+					print STDOUT "nextline is: $nextline\n";
+						if (not(defined($commands{$words[0]}))){
 							$commands{$words[0]} = $nextline;
 						}else{
-								$commands{$words[0]} = $commands{$words[0]}."\n".$nextline; 
-							}
+							$commands{$words[0]} = $commands{$words[0]}."\n".$nextline; 
 						}
-					
+						$nextline = <$file>;
+					}
 				}
-		#		print ($line, "\n");
 			}
+		#	print ($line, "\n");
 		}
-		# /\s+/ one or more whitespace.. 
-		#if words[0] is # ignore line 	
-		
 	}
+	# /\s+/ one or more whitespace.. 		#if words[0] is # ignore line 	
+	close $file;		
+}
 #read lines while defined,
 #if line compare to whitespace is true, ignore
 #if trimmed and substring(0,1) = # OR use split string and check a[0], ignore
 
 
 #MACROS
-	close $file;
-	makeTarget $targetName; 
-}
+#	makeTarget $targetName; 
+
 
 sub makeTarget{
 	my $target = @_;
