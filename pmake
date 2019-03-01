@@ -6,7 +6,7 @@ use warnings;
 #open file
 sub ltrim { my $s = shift; $s =~ s/^\s+//; return $s };
 my %targets;
-my %commands;
+my %commands; 
 # go through file once, store target with its prereqs and its commands into a hash
 # Then, make the target and recursively call its prereqs by looking through the hashtable.
 #
@@ -14,16 +14,23 @@ my %commands;
 
 sub makeTarget{
 	my ($target) = @_;
-#	print "my target is: $target\n";
+	my @prereqs;
+	print "my target is: $target\n";
+	print "targets at my target is: $targets{$target}\n";
+	if($targets{$target} eq ' '){  #Not exactly sure what targets{target} has when empty.. 
+		@prereqs = ' ';
+	}
+	else{
+	   @prereqs = split ' ',$targets{$target};
+	}
 	
-	my @prereqs = $targets{$target};
-#	for (my $k = 0; $k < @prereqs; ++$k){
-#		print STDOUT "$k: $prereqs[$k], ";
- #       }
+	#for (my $k = 0; $k < @prereqs; ++$k){
+	#	print STDOUT "$k: $prereqs[$k], ";
+        #}
 	#print STDOUT @prereqs;
-#	print STDOUT "\nADJKLDJALSKJDKLAS\n";
+	
 	if (not (@prereqs)){
-		#execute the commandi
+		#execute the command
 		print STDOUT "prereq not defined\n";
 		my @execute = split /"\n"/, $commands{$target};
 		for (my $i = 0; $i < @execute ; ++$i){
@@ -60,16 +67,18 @@ for my $targetName ($ARGV[0]) {
 			print "\n";
 			if($words[0] ne "#"){
 				if($words[1] eq ":"){
-					print STDOUT "here 3";	
+					#print STDOUT "here 3";	
 					if (@words > 2){
 						my @test = @words[2 .. $#words];
 						for (my $k = 0; $k < @test; ++$k){
                                                        print STDOUT "$k: $test[$k], ";
 						}
-						print STDOUT "\n";
-						print STDOUT "storing this to hash tbl: $words[0]";
-						$targets{$words[0]} = @test[0 .. $#test];		
-                                          
+						my $testString = join ' ',@test;
+						print STDOUT "Joined string: $testString \n";
+						#print STDOUT "\n";
+						#print STDOUT "storing this to hash tbl: $words[0]";
+						$targets{$words[0]} = $testString;		
+                                         	print STDOUT "targets: $targets{$words[0]}"; 
 					}
 					my $nextline = <$file>;
 					chomp($nextline);
