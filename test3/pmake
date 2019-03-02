@@ -1,0 +1,145 @@
+#!/usr/bin/perl
+# Your name and username@ucsc.edu 
+use strict;
+use warnings;
+
+#open file
+sub ltrim { my $s = shift; $s =~ s/^\s+//; return $s };
+my %targets;
+my %commands; 
+my %macros;
+my $exitStatus = 0;
+# go through file once, store target with its prereqs and its commands into a hash
+# Then, make the target and recursively call its prereqs by looking through the hashtable.
+#
+
+sub mtime ($){
+	my ($filename) = @_;
+	my @stat = stat $filename;
+	return @stat ? $stat[9] : undef;
+}
+
+sub makeTarget{
+	my ($target) = @_;
+	my @prereqs;
+	my $prereqsExist = 1;
+	my $hashValue = $targets{$target};
+	#print "my target is: $target\n";
+	#print "hash value is: $hashValue --\n";
+	
+	if(not (defined ($hashValue))){   
+		#print STDOUT "prereq does not exist\n";
+		$prereqsExist = 0;
+	}
+	else{
+	 	#print STDOUT "prereq exists\n";
+		@prereqs = split " ",$targets{$target};
+		#loop through prereq array, look at first char- if $ then need to look up chars 2 to -2 in macro hash
+		#then split the value string from hash and update the prereq array 
+		for(my $i =0; $i<  @prereqs; ++$i){
+			my $letter = substr($prereqs[$j], 0, 1);
+			if( $letter eq '$'){
+				my $macroString = $macros[$target[2 .. -2]];
+				@prereqs = split ' ' $macroString; 
+				#macros might contain other macros.. need recurisve function?
+			} 
+		}
+	}
+	
+	if($prereqsExist){
+		for (my $j = 0; $j < @prereqs ; ++$j){
+		#check if prereq is a file by checking the target hash
+			if (-e $prereqs[$j]){
+				my $fileTime = mtime ($prereqs[$j]);
+				my $targetTime = mtime ($target);
+				if (defined ($targetTime)){
+					if ($fileTime > $targetTime){
+
+
+					}else{
+						#throw an error, target obsolete
+					}
+				}			
+			}else{
+				makeTarget($prereqs[$j]);
+			}
+		}
+
+
+
+	}
+	
+	#print STDOUT "done making prereqs\n";
+	my @execute = split /"\n"/, $commands{$target};
+	for (my $i = 0; $i < @execute ; ++$i){
+		my @parseExecute = split /\s+/ ,$execute[$i];
+	#	for (my $j = 0; $j < @parseExecute; ++$j){
+	#		print STDOUT "$j: $parseExecute[$j] ";
+#		}
+		if($parseExecute[1] eq "@"){
+			my $deleteAt = substr($execute[$i], 3);
+			system($deleteAt);
+			#check exit status and signal
+		}elsif ($parseExecute[1] eq "-"){
+			#does not exit?
+			my $deleteAt = substr($execute[$i], 3);
+			system($deleteAt);
+		}else{
+			my $wor = ltrim($execute[$i]);
+			print STDOUT "$wor \n";
+			system($execute[$i]);
+			#NEED TO PARSE COMMAND AND LOOK UP MACROS
+			#check exit status and signal
+		}
+	}
+}
+
+for my $targetName ($ARGV[0]) {
+	open my $file, "Makefile" or warn "$0: Makefile: $!\n" and next;
+	while (defined (my $line = <$file>)) {
+		unless($line =~ /^\s*$/) {
+			chomp($line);
+			ltrim($line);
+			my @words = split /\s+/, $line;
+
+			#first check if comment
+			#then check if macro
+			#then check if target
+			if($words[0] ne "#"){
+				if($words[1] eq "="){
+					my @macroTest = @words[2 .. $#words];
+					my $macroString = join ' ', @macroTest;
+					$macros{$words[0]}= $macroString;
+					print STDOUT "Macros for $words[0] are $macros{$words[0]}\n"; 
+				}
+				if($words[1] eq ":"){
+					#target could be a macro, if first char of words[0] is $ then look up macro and update words[0]
+					#update targetname?
+					# should we update when storing or retrieving? 
+
+					if (@words > 2){
+						my @test = @words[2 .. $#words];
+						my $testString = join ' ',@test;
+						$targets{$words[0]} = $testString;		 
+					}
+					my $nextline = <$file>;
+					chomp($nextline);
+					ltrim($nextline);
+					#print STDOUT "nextline is: $nextline";
+					while (not ($nextline =~ /^\s*$/)){
+					#print STDOUT "nextline is: $nextline\n";
+						if (not(defined($commands{$words[0]}))){
+							$commands{$words[0]} = $nextline;
+						}else{
+							$commands{$words[0]} = $commands{$words[0]}."\n".$nextline; 
+						}
+						$nextline = <$file>;
+					}
+				}
+			}
+		}
+	}	
+	close $file;	
+#	makeTarget $targetName;	
+}
+
