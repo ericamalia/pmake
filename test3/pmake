@@ -19,28 +19,71 @@ sub mtime ($){
 	return @stat ? $stat[9] : undef;
 }
 
+sub getMacros{
+	my ($input) = @_;
+	print STDOUT "inside getMacro, input is: $input\n";
+	if($input =~ /{+/){
+		my @macroNames = split /\s+/, $input;
+		#my $finished = 0;
+		for (my $i = 0; $i < @macroNames; ++$i){
+			print STDOUT $macroNames[$i];
+			if ($macroNames[$i] =~ /{+/){
+				print STDOUT "here1\n";
+				my $parseName = substr $macroNames[$i], 2, -1; 
+				print STDOUT "new name is: $parseName\n";
+				if (defined ($macros{$parseName})){
+					print STDOUT "here2\n";
+					$macroNames[$i] = $macros{$parseName};
+				}
+			}else{
+				print STDOUT "here3\n";
+				$macroNames[$i] = $targets{$macroNames[$i]};
+			}
+			print STDOUT "\nafter hash: $macroNames[$i]\n";
+		}
+		my $output = join ' ', @macroNames;
+		my $finished = $output;
+		$finished =~ /{+/;
+	#	print STDOUT "finished getting macro, output: $finished\n";
+		if(not ($finished)) {
+			print STDOUT "finished getting macro, output: $output---\n";
+			return $output;
+		}else{
+			print STDOUT "resursive call\n";
+			return getMacros($output);
+		}
+	}else{
+		return $input;
+	}
+}
+
 sub makeTarget{
-	my ($target) = @_;
+	my ($input) = @_;
+	
+	############ substitute target and prereqs with macros here #############
+	my $target = getMacros ($input);
+	print STDOUT "in make target, new target is: $target\n";
 	my @prereqs;
 	my $prereqsExist = 1;
 	my $hashValue = $targets{$target};
 	#print "my target is: $target\n";
 	#print "hash value is: $hashValue --\n";
 	
+
+	
 	if(not (defined ($hashValue))){   
-		#print STDOUT "prereq does not exist\n";
 		$prereqsExist = 0;
 	}
 	else{
-	 	#print STDOUT "prereq exists\n";
 		@prereqs = split " ",$targets{$target};
 		#loop through prereq array, look at first char- if $ then need to look up chars 2 to -2 in macro hash
 		#then split the value string from hash and update the prereq array 
 		for(my $i =0; $i<  @prereqs; ++$i){
-			my $letter = substr($prereqs[$j], 0, 1);
+			my $letter = substr($prereqs[$i], 0, 1);
 			if( $letter eq '$'){
-				my $macroString = $macros[$target[2 .. -2]];
-				@prereqs = split ' ' $macroString; 
+		
+#		my $macroString = $macros[$target[2 .. -2]];
+		#		@prereqs = split ' ' $macroString; 
 				#macros might contain other macros.. need recurisve function?
 			} 
 		}
@@ -140,6 +183,6 @@ for my $targetName ($ARGV[0]) {
 		}
 	}	
 	close $file;	
-#	makeTarget $targetName;	
+	makeTarget $targetName;	
 }
 
