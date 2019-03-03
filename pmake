@@ -98,7 +98,7 @@ for my $targetName ($ARGV[0]) {
 					my @macroTest = @words[2 .. $#words];
 					my $macroString = join ' ', @macroTest;
 					$macros{$words[0]}= $macroString;
-					 
+					print STDOUT "Macros for {$words[0]} are $macros{$words[0]}"; 
 				}
 				if($words[1] eq ":"){
 					if (@words > 2){
