@@ -21,35 +21,35 @@ sub mtime ($){
 
 sub getMacros{
 	my ($input) = @_;
-	print STDOUT "inside getMacro, input is: $input\n";
+	#print STDOUT "inside getMacro, input is: $input\n";
 	if($input =~ /{+/){
 		my @macroNames = split /\s+/, $input;
 		#my $finished = 0;
 		for (my $i = 0; $i < @macroNames; ++$i){
-			print STDOUT $macroNames[$i];
+	#		print STDOUT $macroNames[$i];
 			if ($macroNames[$i] =~ /{+/){
-				print STDOUT "here1\n";
+	#			print STDOUT "here1\n";
 				my $parseName = substr $macroNames[$i], 2, -1; 
-				print STDOUT "new name is: $parseName\n";
+	#			print STDOUT "new name is: $parseName\n";
 				if (defined ($macros{$parseName})){
-					print STDOUT "here2\n";
+	#				print STDOUT "here2\n";
 					$macroNames[$i] = $macros{$parseName};
 				}
 			}else{
-				print STDOUT "here3\n";
+	#			print STDOUT "here3\n";
 				$macroNames[$i] = $targets{$macroNames[$i]};
 			}
-			print STDOUT "\nafter hash: $macroNames[$i]\n";
+	#		print STDOUT "\nafter hash: $macroNames[$i]\n";
 		}
 		my $output = join ' ', @macroNames;
 		my $finished = $output;
 		$finished =~ /{+/;
 	#	print STDOUT "finished getting macro, output: $finished\n";
 		if(not ($finished)) {
-			print STDOUT "finished getting macro, output: $output---\n";
+	#		print STDOUT "finished getting macro, output: $output---\n";
 			return $output;
 		}else{
-			print STDOUT "resursive call\n";
+	#		print STDOUT "resursive call\n";
 			return getMacros($output);
 		}
 	}else{
@@ -61,12 +61,12 @@ sub makeTarget{
 	my ($input) = @_;
 	
 	############ substitute target and prereqs with macros here #############
-	my $target = $input;
-	print STDOUT "in make target, new target is: $target\n";
+	my $target = getMacros($input);
+#	print STDOUT "in make target, new target is: $target\n";
 	my @prereqs;
 	my $prereqsExist = 1;
 	my $hashValue = $targets{$target};
-	#print "my target is: $target\n";
+#	print "my target is: $target\n";
 	#print "hash value is: $hashValue --\n";
 	
 	
@@ -76,29 +76,35 @@ sub makeTarget{
 	else{
 		@prereqs = split " ",$targets{$target};
 		#loop through prereq array
-		for(my $i =0; $i<  @prereqs; ++$i){
-			print STDOUT "prereq before getMacro is: $prereqs[$i] \n";
-		 	$prereqs[$i] = getMacros($prereqs[$i]);
-			print STDOUT "prereq after getMacro is: $prereqs[$i] \n";
+#		for(my $i =0; $i<  @prereqs; ++$i){
+#			print STDOUT "prereq at $i is: $prereqs[$i]\n";
+#		 	$prereqs[$i] = getMacros($prereqs[$i]);
+#			print STDOUT "prereq after getMacro is: $prereqs[$i] \n";
 			#if get macros returns a list of macros, when to split?
 			
-		}
+#		}
 	}
 	
 	if($prereqsExist){
 		for (my $j = 0; $j < @prereqs ; ++$j){
-			print STDOUT "looping through prereqs \n";
+	#		print STDOUT "looping through prereqs \n";
 		#check if prereq is a file by checking the target hash
 			if (-e $prereqs[$j]){
 				my $fileTime = mtime ($prereqs[$j]);
 				my $targetTime = mtime ($target);
 				if (defined ($targetTime)){
 					if ($fileTime > $targetTime){
-
-
+	#					print STDOUT "heerererrern\n";
+						
 					}else{
+	#					print STDOUT "2918390128390123\n";
+					#	makeTarget($prereqs[$j]);
 						#throw an error, target obsolete
 					}
+				}else{
+#					print STDOUT "$target does not exist\n";
+				#	makeTarget($prereqs[$j]);
+	#				print STDOUT "$target does not exist\n";
 				}			
 			}else{
 				print STDOUT "calling makeTarget for: $prereqs[$j]\n";
@@ -109,27 +115,32 @@ sub makeTarget{
 	}
 	
 	#print STDOUT "done making prereqs\n";
-	print STDOUT "beginning commands, command is: $commands{$target}\n";
-	my @execute = split /"\n"/, $commands{$target};
+#	print STDOUT "beginning commands, command is: $commands{$target}\n";
+#	my @execute;
+#	if (defined ($commands{$target})){
+		my @execute = split /"\n"/, $commands{$target};
+#	}
 	for (my $i = 0; $i < @execute ; ++$i){
 		my @parseExecute = split /\s+/ ,$execute[$i];
-	
-		if($parseExecute[1] eq "@"){
-			my $deleteAt = substr($execute[$i], 3);
+        	for(my $j =0; $j <@parseExecute; ++$j){
+                	$parseExecute[$j] = getMacros($parseExecute[$j]);
+        	}
+        	my $afterMacrosWord = join ' ', @parseExecute;
+        	my $wor = ltrim($afterMacrosWord);
+        	my @newExecute = split /\s+/, $wor;
+        	print STDOUT "$wor\n";
+
+		if($newExecute[0] eq "@"){
+			my $deleteAt = substr($wor, 3);
 			system($deleteAt);
 			#check exit status and signal
-		}elsif ($parseExecute[1] eq "-"){
+		}elsif ($newExecute[0] eq "-"){
 			#does not exit?
-			my $deleteAt = substr($execute[$i], 3);
+			my $deleteAt = substr($wor, 2);
+		#	print STDOUT "- command: $deleteAt\n";
 			system($deleteAt);
 		}else{
-			for(my $j =0; $j <@parseExecute; ++$j){
-				$parseExecute[$j] = getMacros($parseExecute[$j]); 
-			}
-			my $afterMacrosWord = join ' ', @parseExecute; 
-			my $wor = ltrim($afterMacrosWord);
-			print STDOUT "$wor \n";
-			system($execute[$i]);
+			system($wor);
 			#check exit status and signal
 		}
 	}
@@ -151,12 +162,15 @@ for my $targetName ($ARGV[0]) {
 					my @macroTest = @words[2 .. $#words];
 					my $macroString = join ' ', @macroTest;
 					$macros{$words[0]}= $macroString;
-					print STDOUT "Macros for $words[0] are $macros{$words[0]}\n"; 
+#					print STDOUT "Macros for $words[0] are $macros{$words[0]}\n"; 
 				}
 				if($words[1] eq ":"){
 					#target could be a macro, if first char of words[0] is $ then look up macro and update words[0]
 					if (@words > 2){
 						my @test = @words[2 .. $#words];
+						for (my $i = 0; $i < @test; ++$i){
+							$test[$i] = getMacros($test[$i]);
+						}
 						my $testString = join ' ',@test;
 						#$targets{$words[0]} = $testString;		 
 						$targets{getMacros($words[0])} =$testString; 
