@@ -41,7 +41,13 @@ sub getMacros{
 			}
 	#		print STDOUT "\nafter hash: $macroNames[$i]\n";
 		}
-		my $output = join ' ', @macroNames;
+		my $output; 
+		if(defined($macroNames[0])){
+			$output = join ' ', @macroNames;
+		}
+		else{
+			$output = '';
+		}
 		my $finished = $output;
 		$finished =~ /{+/;
 	#	print STDOUT "finished getting macro, output: $finished\n";
@@ -116,10 +122,10 @@ sub makeTarget{
 	
 	#print STDOUT "done making prereqs\n";
 #	print STDOUT "beginning commands, command is: $commands{$target}\n";
-#	my @execute;
-#	if (defined ($commands{$target})){
+	my @execute;
+	if (defined ($commands{$target})){
 		my @execute = split /"\n"/, $commands{$target};
-#	}
+	}
 	for (my $i = 0; $i < @execute ; ++$i){
 		my @parseExecute = split /\s+/ ,$execute[$i];
         	for(my $j =0; $j <@parseExecute; ++$j){
