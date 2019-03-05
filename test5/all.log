@@ -7,32 +7,17 @@ perl: warning: Please check that your locale settings:
 	LANG = "en_US.UTF-8"
     are supported and installed on your system.
 perl: warning: Falling back to the standard locale ("C").
-Use of uninitialized value in split at /afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/pmake line 91.
-Use of uninitialized value in split at /afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/pmake line 91.
-Use of uninitialized value $parseSpecial[3] in join or string at /afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/pmake line 96.
-Use of uninitialized value $parseSpecial[5] in join or string at /afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/pmake line 96.
+Use of uninitialized value in split at ./pmake line 91.
+Use of uninitialized value in split at ./pmake line 91.
+Use of uninitialized value $parseSpecial[3] in join or string at ./pmake line 96.
+Use of uninitialized value $parseSpecial[5] in join or string at ./pmake line 96.
 cid +  javac 
-perl: warning: Setting locale failed.
-perl: warning: Please check that your locale settings:
-	LANGUAGE = (unset),
-	LC_ALL = (unset),
-	LC_COLLATE = "C",
-	LC_CTYPE = "UTF-8",
-	LANG = "en_US.UTF-8"
-    are supported and installed on your system.
-perl: warning: Falling back to the standard locale ("C").
-Use of uninitialized value in split at /afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/pmake line 91.
-Use of uninitialized value in split at /afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/pmake line 91.
-Use of uninitialized value $parseSpecial[3] in join or string at /afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/pmake line 96.
-Use of uninitialized value $parseSpecial[5] in join or string at /afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/pmake line 96.
+Can't exec "cid": No such file or directory at ./pmake line 99.
+Use of uninitialized value in split at ./pmake line 91.
+Use of uninitialized value in split at ./pmake line 91.
+Use of uninitialized value $parseSpecial[3] in join or string at ./pmake line 96.
+Use of uninitialized value $parseSpecial[5] in join or string at ./pmake line 96.
 cid +  javac 
-perl: warning: Setting locale failed.
-perl: warning: Please check that your locale settings:
-	LANGUAGE = (unset),
-	LC_ALL = (unset),
-	LC_COLLATE = "C",
-	LC_CTYPE = "UTF-8",
-	LANG = "en_US.UTF-8"
-    are supported and installed on your system.
-perl: warning: Falling back to the standard locale ("C").
+Can't exec "cid": No such file or directory at ./pmake line 99.
+rm Manifest
 rm: cannot remove 'Manifest': No such file or directory

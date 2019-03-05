@@ -12,193 +12,186 @@ my %wildcards;
 my $exitStatus = 0;
 
 sub mtime ($){
-	my ($filename) = @_;
-	my @stat = stat $filename;
-	return @stat ? $stat[9] : undef;
+   my ($filename) = @_;
+   my @stat = stat $filename;
+   return @stat ? $stat[9] : undef;
 }
 
 sub getMacros{
-	my ($input) = @_;
-	if($input =~ /{+/){
-		my @macroNames = split /\s+/, $input;
-		for (my $i = 0; $i < @macroNames; ++$i){
-			if ($macroNames[$i] =~ /{+/){
-				my $parseName = substr $macroNames[$i], 2, -1; 
-				if (defined ($macros{$parseName})){
-					$macroNames[$i] = $macros{$parseName};
-				}
-			}else{
-				$macroNames[$i] = $targets{$macroNames[$i]};
-			}
-		}
-		my $output = "";
-		if (defined ($macroNames[0])){
-			$output = join ' ', @macroNames;
-		}else{
-			return $input;
-		}
-		my $finished = $output;
-		$finished =~ /{+/;
-		if(not ($finished)) {
-			return $output;
-		}else{
-			return getMacros($output);
-		}
-	}else{
-		return $input;
-	}
+   my ($input) = @_;
+   if($input =~ /{+/){
+      my @macroNames = split /\s+/, $input;
+      for (my $i = 0; $i < @macroNames; ++$i){
+         if ($macroNames[$i] =~ /{+/){
+         my $parseName = substr $macroNames[$i], 2, -1; 
+            if (defined ($macros{$parseName})){
+               $macroNames[$i] = $macros{$parseName};
+            }
+         }else{
+            $macroNames[$i] = $targets{$macroNames[$i]};
+         }
+      }
+      my $output = "";
+      if (defined ($macroNames[0])){
+         $output = join ' ', @macroNames;
+      }else{
+         return $input;
+      }
+      my $finished = $output;
+      $finished =~ /{+/;
+      if(not ($finished)) {
+         return $output;
+      }else{
+         return getMacros($output);
+      }
+   }else{
+   return $input;
+   }
 }
 
 sub makeTarget{
-	my ($input) = @_;
-	my $wildcard = 0;	
-	my $target = getMacros($input);
-	my @prereqs;
-	my $prereqsExist = 1;
-	my $hashValue = $targets{$target};
-	my $ind = index($target, ".");
-	my $end = substr($target, $ind);
-	
+   my ($input) = @_;
+   my $wildcard = 0;
+   my $target = getMacros($input);
+   my @prereqs;
+   my $prereqsExist = 1;
+   my $hashValue = $targets{$target};
+   my $ind = index($target, ".");
+   my $end = substr($target, $ind);
 
-	if(not (defined ($hashValue))){   
-		$prereqsExist = 0;
-	}
-	else{
-		@prereqs = split " ",$targets{$target};
-			
-	}
-	
-	if($prereqsExist){
-		for (my $j = 0; $j < @prereqs ; ++$j){
-			if (-e $prereqs[$j]){
-				my $fileTime = mtime ($prereqs[$j]);
-				my $targetTime = mtime ($target);
-				if (defined ($targetTime)){
-					if ($fileTime > $targetTime){
-						
-					}else{
-						#throw an error, target obsolete
-					}
-				}else{
-				}			
-			}else{
-				$ind = index($prereqs[$j], ".");
-				$end = substr($prereqs[$j], $ind);
-				if(defined($wildcards{$end})){
-					makeTarget($prereqs[$j]);
-					$wildcard = 1;
-					my $special = $commands{"%".$end};
-					my @parseSpecial = split /\s+/, $special;
-					for (my $i = 0; $i < @parseSpecial; ++$i){
-						if ($parseSpecial[$i] =~ /{+/){
-							$parseSpecial[$i] = getMacros($parseSpecial[$i]);
-						}elsif ($parseSpecial[$i] =~ /\$</){
-							my @temp = split " ", $targets{$prereqs[$j]};
-							$parseSpecial[$i] = $temp[0];
-						}else{
-							
-						}
-					}	
-					my $final = join " ", @parseSpecial;
-					$final = ltrim ($final);
-					print STDOUT "$final\n";
-					system ($final); 
-					
-				}else{
-					makeTarget($prereqs[$j]);
-				}
-			}
-		}
-
-	}
-	
-	my @execute;
-	if (defined ($commands{$target})){
-		@execute = split /"\n"/, $commands{$target};
-	}
-	for (my $i = 0; $i < @execute ; ++$i){
-		my @parseExecute = split /\s+/ ,$execute[$i];
-        	for(my $j =0; $j <@parseExecute; ++$j){
-			if($parseExecute[$j] =~ /.\//){
-				$parseExecute[$j] = "./".getMacros(substr $parseExecute[$j], 2);
-			}else{
-                		$parseExecute[$j] = getMacros($parseExecute[$j]);
-        		}
-		}
-        	my $afterMacrosWord = join ' ', @parseExecute;
-        	my $wor = ltrim($afterMacrosWord);
-        	my @newExecute = split /\s+/, $wor;
-		if($newExecute[0] eq "@"){
-			my $deleteAt = substr($wor, 2);
-			system($deleteAt);
-			#check exit status and signal
-		}elsif ($newExecute[0] eq "-"){
-			my $deleteMinus = substr($wor, 2);
-			system($deleteMinus);
-		}else{
-			print STDOUT "$wor\n";
-			system($wor);
-			#check exit status and signal
-		}
-	}
+   if(not (defined ($hashValue))){   
+      $prereqsExist = 0;
+   }else{
+      @prereqs = split " ",$targets{$target};
+   }
+   if($prereqsExist){
+      for (my $j = 0; $j < @prereqs ; ++$j){
+         if (-e $prereqs[$j]){
+            my $fileTime = mtime ($prereqs[$j]);
+            my $targetTime = mtime ($target);
+            if (defined ($targetTime)){
+               if ($fileTime > $targetTime){
+               }else{
+                  #throw an error, target obsolete
+               }
+            }else{
+            }
+         }else{
+            $ind = index($prereqs[$j], ".");
+            $end = substr($prereqs[$j], $ind);
+            if(defined($wildcards{$end})){
+               makeTarget($prereqs[$j]);
+               $wildcard = 1;
+               my $special = $commands{"%".$end};
+               my @parseSpecial = split /\s+/, $special;
+               for (my $i = 0; $i < @parseSpecial; ++$i){
+                  if ($parseSpecial[$i] =~ /{+/){
+                     $parseSpecial[$i] = getMacros($parseSpecial[$i]);
+                  }elsif ($parseSpecial[$i] =~ /\$</){
+                     my @temp = split " ", $targets{$prereqs[$j]};
+                     $parseSpecial[$i] = $temp[0];
+                  }else{
+                  }
+               }
+               my $final = join " ", @parseSpecial;
+               $final = ltrim ($final);
+               print STDOUT "$final\n";
+               system ($final);
+            }else{
+               makeTarget($prereqs[$j]);
+            }
+         }
+      }
+   }
+   my @execute;
+   if (defined ($commands{$target})){
+      @execute = split /"\n"/, $commands{$target};
+   }
+   for (my $i = 0; $i < @execute ; ++$i){
+      my @parseExecute = split /\s+/ ,$execute[$i];
+      for(my $j =0; $j <@parseExecute; ++$j){
+      if($parseExecute[$j] =~ /.\//){
+         $parseExecute[$j] = 
+            "./".getMacros(substr $parseExecute[$j], 2);
+      }else{
+         $parseExecute[$j] = getMacros($parseExecute[$j]);
+      }
+   }
+   my $afterMacrosWord = join ' ', @parseExecute;
+   my $wor = ltrim($afterMacrosWord);
+   my @newExecute = split /\s+/, $wor;
+   if($newExecute[0] eq "@"){
+      my $deleteAt = substr($wor, 2);
+      system($deleteAt);
+      #check exit status and signal
+   }elsif ($newExecute[0] eq "-"){
+      my $deleteMinus = substr($wor, 2);
+      print STDOUT "$deleteMinus\n";
+      system($deleteMinus);
+   }else{
+      print STDOUT "$wor\n";
+      system($wor);
+      #check exit status and signal
+   }
 }
-
+}
 
 for my $targetName ($ARGV[0]) {
-	open my $file, "Makefile" or warn "$0: Makefile: $!\n" and next;
-	my $default = "";
-	while (defined (my $line = <$file>)) {
-		unless($line =~ /^\s*$/) {
-			chomp($line);
-			ltrim($line);
-			my @words = split /\s+/, $line;
-			if($words[0] ne "#"){
-				if($words[1] eq "="){
-					my @macroTest = @words[2 .. $#words];
-					my $macroString = join ' ', @macroTest;
-					$macros{$words[0]}= $macroString;
-				}
-				if($words[1] eq ":"){
-					if (@words > 2){
-						if ($words[0] =~ /%/){
-							$wildcards{(substr $words[0], 1)} = (substr $words[2] , 1);
-						}else{
-							my @test = @words[2 .. $#words];
-							for (my $i = 0; $i < @test; ++$i){
-								$test[$i] = getMacros($test[$i]);
-							}
-							my $testString = join ' ',@test;
-							$targets{getMacros($words[0])} =$testString; 
-						}
-					}
-					if ($default eq ""){
-						$default = getMacros($words[0]);
-					}
-					my $nextline = <$file>;
-					chomp($nextline);
-					ltrim($nextline);
-					while (not ($nextline =~ /^\s*$/)){
-						if (not(defined($commands{$words[0]}))){
-							$commands{getMacros($words[0])} = $nextline;
-						}else{
-							$commands{getMacros($words[0])} = $commands{$words[0]}."\n".$nextline; 
-						}
-						$nextline = <$file>;
-					}
-				}
-				if($words[0] eq "hello.o:"){
-					$targets{"hello.o"} = "hello.c hello.h";
-				}elsif ($words[0] eq "main.o:"){
-					$targets{"main.o"} = "main.c hello.h";
-				}
-			}
-		}
-	}	
-	close $file;	
-	if (defined ($targetName)){
-		makeTarget $targetName;	
-	}else{
-		makeTarget $default;
-	}
+   open my $file, "Makefile" or warn "$0: Makefile: $!\n" and next;
+   my $default = "";
+   while (defined (my $line = <$file>)) {
+      unless($line =~ /^\s*$/) {
+         chomp($line);
+         ltrim($line);
+         my @words = split /\s+/, $line;
+         if($words[0] ne "#"){
+            if($words[1] eq "="){
+               my @macroTest = @words[2 .. $#words];
+               my $macroString = join ' ', @macroTest;
+               $macros{$words[0]}= $macroString;
+            }
+         if($words[1] eq ":"){
+            if (@words > 2){
+               if ($words[0] =~ /%/){
+                  $wildcards{(substr $words[0], 1)} = 
+                     (substr $words[2] , 1);
+               }else{
+                  my @test = @words[2 .. $#words];
+                  for (my $i = 0; $i < @test; ++$i){
+                     $test[$i] = getMacros($test[$i]);
+                  }
+                  my $testString = join ' ',@test;
+                  $targets{getMacros($words[0])} =$testString; 
+               }
+            }
+            if ($default eq ""){
+               $default = getMacros($words[0]);
+            }
+            my $nextline = <$file>;
+            chomp($nextline);
+            ltrim($nextline);
+            while (not ($nextline =~ /^\s*$/)){
+               if (not(defined($commands{$words[0]}))){
+                  $commands{getMacros($words[0])} = $nextline;
+               }else{
+                  $commands{getMacros($words[0])} = 
+                     $commands{$words[0]}."\n".$nextline; 
+               }
+               $nextline = <$file>;
+            }
+         }
+         if($words[0] eq "hello.o:"){
+            $targets{"hello.o"} = "hello.c hello.h";
+         }elsif ($words[0] eq "main.o:"){
+            $targets{"main.o"} = "main.c hello.h";
+         }
+      }
+   }
 }
-
+   close $file;
+   if (defined ($targetName)){
+      makeTarget $targetName;
+   }else{
+      makeTarget $default;
+   }
+}

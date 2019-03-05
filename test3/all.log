@@ -7,6 +7,12 @@ perl: warning: Please check that your locale settings:
 	LANG = "en_US.UTF-8"
     are supported and installed on your system.
 perl: warning: Falling back to the standard locale ("C").
-Use of uninitialized value $input in pattern match (m//) at ./pmake line 25.
-Use of uninitialized value $target in hash element at ./pmake line 76.
-Use of uninitialized value $target in hash element at ./pmake line 116.
+gcc -c main.c
+gcc -c hello.c
+hello.c: In function 'hello':
+hello.c:6:4: warning: implicit declaration of function 'printf' [-Wimplicit-function-declaration]
+    printf ("Hello, world.\n");
+    ^~~~~~
+hello.c:6:4: warning: incompatible implicit declaration of built-in function 'printf'
+hello.c:6:4: note: include '<stdio.h>' or provide a declaration of 'printf'
+gcc main.o hello.o -o hello

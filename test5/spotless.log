@@ -7,8 +7,10 @@ perl: warning: Please check that your locale settings:
 	LANG = "en_US.UTF-8"
     are supported and installed on your system.
 perl: warning: Falling back to the standard locale ("C").
-Use of uninitialized value $macroNames[1] in join or string at /afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/pmake line 36.
-Use of uninitialized value $macroNames[2] in join or string at /afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/pmake line 36.
+Use of uninitialized value $macroNames[1] in join or string at ./pmake line 36.
+Use of uninitialized value $macroNames[2] in join or string at ./pmake line 36.
+rm queue.class qtest.class  
 rm: cannot remove 'queue.class': No such file or directory
 rm: cannot remove 'qtest.class': No such file or directory
+rm qtest
 rm: cannot remove 'qtest': No such file or directory
