@@ -1,12 +1,12 @@
-"my" variable %commands masks earlier declaration in same scope at ./pmake line 69.
-syntax error at ./pmake line 51, near "){"
-Global symbol "$j" requires explicit package name at ./pmake line 60.
-syntax error at ./pmake line 66, near "}"
-Global symbol "@execute" requires explicit package name at ./pmake line 70.
-Global symbol "@execute" requires explicit package name at ./pmake line 71.
-Global symbol "@execute" requires explicit package name at ./pmake line 76.
-Global symbol "@execute" requires explicit package name at ./pmake line 81.
-Global symbol "@execute" requires explicit package name at ./pmake line 84.
-Global symbol "@execute" requires explicit package name at ./pmake line 86.
-syntax error at ./pmake line 90, near "}"
-./pmake has too many errors.
+perl: warning: Setting locale failed.
+perl: warning: Please check that your locale settings:
+	LANGUAGE = (unset),
+	LC_ALL = (unset),
+	LC_COLLATE = "C",
+	LC_CTYPE = "UTF-8",
+	LANG = "en_US.UTF-8"
+    are supported and installed on your system.
+perl: warning: Falling back to the standard locale ("C").
+Use of uninitialized value $target in hash element at ./pmake line 25.
+Use of uninitialized value $target in hash element at ./pmake line 69.
+Use of uninitialized value in split at ./pmake line 69.

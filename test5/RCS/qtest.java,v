@@ -1,4 +1,26 @@
-// $Id: qtest.java,v 1.1 2019-03-04 19:44:15-08 - - $
+head	1.1;
+access;
+symbols;
+locks;
+comment	@# @;
+
+
+1.1
+date	2019.03.05.03.44.15;	author -;	state -;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@-
+@
+text
+@// $Id: qtest.java,v 1.1 2011-03-24 17:23:13-07 - - $
 
 import static java.lang.System.*;
 
@@ -12,3 +34,4 @@ class qtest {
 
 };
 
+@

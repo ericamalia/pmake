@@ -1,4 +1,26 @@
-# $Id: Makefile,v 1.1 2019-03-04 19:44:14-08 - - $
+head	1.1;
+access;
+symbols;
+locks;
+comment	@# @;
+
+
+1.1
+date	2019.03.05.03.44.14;	author -;	state -;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@-
+@
+text
+@# $Id: Makefile,v 1.2 2015-11-03 13:44:07-08 - - $
 
 MKFILE   = Makefile
 CCOPTS   = -g -O0 -Wall -Wextra
@@ -31,3 +53,4 @@ spotless : clean
 hello.o: hello.c hello.h
 main.o: main.c hello.h
 
+@

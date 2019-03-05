@@ -1,8 +1,14 @@
-"my" variable $i masks earlier declaration in same scope at /afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/pmake line 65.
-"my" variable $i masks earlier declaration in same scope at /afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/pmake line 65.
-"my" variable $i masks earlier declaration in same scope at /afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/pmake line 65.
-Bareword "makeTarget" not allowed while "strict subs" in use at /afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/pmake line 51.
-syntax error at /afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/pmake line 60, near "@execute:"
-syntax error at /afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/pmake line 63, near "}"
-Bareword "n" not allowed while "strict subs" in use at /afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/pmake line 32.
-Execution of /afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/pmake aborted due to compilation errors.
+perl: warning: Setting locale failed.
+perl: warning: Please check that your locale settings:
+	LANGUAGE = (unset),
+	LC_ALL = (unset),
+	LC_COLLATE = "C",
+	LC_CTYPE = "UTF-8",
+	LANG = "en_US.UTF-8"
+    are supported and installed on your system.
+perl: warning: Falling back to the standard locale ("C").
+Use of uninitialized value $macroNames[1] in join or string at /afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/pmake line 36.
+Use of uninitialized value $macroNames[2] in join or string at /afs/cats.ucsc.edu/users/j/kelxu/CMPS_112/asg4/pmake line 36.
+rm: cannot remove 'queue.class': No such file or directory
+rm: cannot remove 'qtest.class': No such file or directory
+rm: cannot remove 'qtest': No such file or directory

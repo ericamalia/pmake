@@ -1,4 +1,26 @@
-// $Id: queue.java,v 1.1 2019-03-04 19:44:15-08 - - $
+head	1.1;
+access;
+symbols;
+locks;
+comment	@# @;
+
+
+1.1
+date	2019.03.05.03.44.15;	author -;	state -;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@-
+@
+text
+@// $Id: queue.java,v 1.2 2011-12-15 18:15:36-08 - - $
 
 class queue<item_t> {
    static class emptyexn extends RuntimeException {};
@@ -32,3 +54,4 @@ class queue<item_t> {
    };
 
 };
+@

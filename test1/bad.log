@@ -1,12 +1,20 @@
-give make target
+perl: warning: Setting locale failed.
+perl: warning: Please check that your locale settings:
+	LANGUAGE = (unset),
+	LC_ALL = (unset),
+	LC_COLLATE = "C",
+	LC_CTYPE = "UTF-8",
+	LANG = "en_US.UTF-8"
+    are supported and installed on your system.
+perl: warning: Falling back to the standard locale ("C").
 gcc bad.c -o bad
-bad.c:3:1: error: unknown type name ‘This’
+bad.c:3:1: error: unknown type name 'This'
  This is a bad file.
  ^~~~
-bad.c:3:9: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘a’
+bad.c:3:9: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'a'
  This is a bad file.
          ^
-bad.c:3:9: error: unknown type name ‘a’
+bad.c:3:9: error: unknown type name 'a'
 bad.c:4:7: warning: missing terminating ' character
  cc won't compile it.
        ^
