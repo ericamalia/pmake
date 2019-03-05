@@ -7,6 +7,8 @@ use warnings;
 sub ltrim { my $s = shift; $s =~ s/^\s+//; return $s };
 my %targets;
 my %commands; 
+my %macros;
+my $exitStatus = 0;
 # go through file once, store target with its prereqs and its commands into a hash
 # Then, make the target and recursively call its prereqs by looking through the hashtable.
 #
@@ -17,99 +19,165 @@ sub mtime ($){
 	return @stat ? $stat[9] : undef;
 }
 
+sub getMacros{
+	my ($input) = @_;
+	#print STDOUT "inside getMacro, input is: $input\n";
+	if($input =~ /{+/){
+#		print STDOUT "input is: $input\n";
+		my @macroNames = split /\s+/, $input;
+		#my $finished = 0;
+		for (my $i = 0; $i < @macroNames; ++$i){
+	#		print STDOUT $macroNames[$i];
+			if ($macroNames[$i] =~ /{+/){
+	#			print STDOUT "here1\n";
+				my $parseName = substr $macroNames[$i], 2, -1; 
+	#			print STDOUT "new name is: $parseName\n";
+				if (defined ($macros{$parseName})){
+	#				print STDOUT "here2\n";
+					$macroNames[$i] = $macros{$parseName};
+				}
+			}else{
+	#			print STDOUT "here3\n";
+				$macroNames[$i] = $targets{$macroNames[$i]};
+			}
+	#		print STDOUT "\nafter hash: $macroNames[$i]\n";
+		}
+		my $output = "";
+		if (defined ($macroNames[0])){
+#			print STDOUT "first item is: $macroNames[0]---\n";	
+			$output = join ' ', @macroNames;
+		}else{
+			return $input;
+		}
+#		print STDOUT "output is: $output--\n";
+		my $finished = $output;
+		$finished =~ /{+/;
+	#	print STDOUT "finished getting macro, output: $finished\n";
+		if(not ($finished)) {
+	#		print STDOUT "finished getting macro, output: $output---\n";
+			return $output;
+		}else{
+	#		print STDOUT "resursive call\n";
+			return getMacros($output);
+		}
+	}else{
+		return $input;
+	}
+}
+
 sub makeTarget{
-	my ($target) = @_;
+	my ($input) = @_;
+	
+	############ substitute target and prereqs with macros here #############
+	my $target = getMacros($input);
+#	print STDOUT "in make target, new target is: $target\n";
 	my @prereqs;
 	my $prereqsExist = 1;
 	my $hashValue = $targets{$target};
-	#print "my target is: $target\n";
+#	print "my target is: $target\n";
 	#print "hash value is: $hashValue --\n";
+	
+	
 	if(not (defined ($hashValue))){   
-		#print STDOUT "prereq does not exist\n";
 		$prereqsExist = 0;
 	}
 	else{
-	 	#print STDOUT "prereq exists\n";
 		@prereqs = split " ",$targets{$target};
+			
 	}
 	
-	#for (my $k = 0; $k < @prereqs; ++$k){
-	#	print STDOUT "$k: $prereqs[$k], ";
-        #}
-	#print STDOUT @prereqs;
 	if($prereqsExist){
-		#print STDOUT "prereq defined\n";
 		for (my $j = 0; $j < @prereqs ; ++$j){
-		#check if prereq is a file by checking the target hash
-		#check time stamp between target and prereq[i] if file
-		#if not file makeTarget the prereq
-			#print STDOUT "$j: recursive call on: $prereqs[$j]\n";
 			if (-e $prereqs[$j]){
 				my $fileTime = mtime ($prereqs[$j]);
 				my $targetTime = mtime ($target);
 				if (defined ($targetTime)){
-				if ($fileTime > $targetTime){
-
-
+					if ($fileTime > $targetTime){
+						
+					}else{
+					#	makeTarget($prereqs[$j]);
+						#throw an error, target obsolete
+					}
 				}else{
-					#throw an error, target obsolete
-				}			}
+				#	makeTarget($prereqs[$j]);
+				}			
 			}else{
+				print STDOUT "calling makeTarget for: $prereqs[$j]\n";
 				makeTarget($prereqs[$j]);
 			}
 		}
 
-
-
 	}
 	
 	#print STDOUT "done making prereqs\n";
-	my @execute = split /"\n"/, $commands{$target};
+#	print STDOUT "beginning commands, command is: $commands{$target}\n";
+#	my @execute;
+	my @execute;
+	if (defined ($commands{$target})){
+		@execute = split /"\n"/, $commands{$target};
+	}
 	for (my $i = 0; $i < @execute ; ++$i){
 		my @parseExecute = split /\s+/ ,$execute[$i];
-	#	for (my $j = 0; $j < @parseExecute; ++$j){
-	#		print STDOUT "$j: $parseExecute[$j] ";
-#		}
-		if($parseExecute[1] eq "@"){
-				my $deleteAt = substr($execute[$i], 3);
+        	for(my $j =0; $j <@parseExecute; ++$j){
+			if($parseExecute[$j] =~ /.\//){
+				$parseExecute[$j] = "./".getMacros(substr $parseExecute[$j], 2);
+			}else{
+                		$parseExecute[$j] = getMacros($parseExecute[$j]);
+        		}
+		}
+        	my $afterMacrosWord = join ' ', @parseExecute;
+        	my $wor = ltrim($afterMacrosWord);
+        	my @newExecute = split /\s+/, $wor;
+        	print STDOUT "$wor\n";
+
+		if($newExecute[0] eq "@"){
+			my $deleteAt = substr($wor, 3);
+			system($deleteAt);
+			#check exit status and signal
+		}elsif ($newExecute[0] eq "-"){
+			#does not exit?
+			my $deleteAt = substr($wor, 2);
+		#	print STDOUT "- command: $deleteAt\n";
 			system($deleteAt);
 		}else{
-			my $wor = ltrim($execute[$i]);
-			print STDOUT "$wor \n";
-			system($execute[$i]);
+			system($wor);
+			#check exit status and signal
 		}
 	}
 }
 
 for my $targetName ($ARGV[0]) {
 	open my $file, "Makefile" or warn "$0: Makefile: $!\n" and next;
+	my $default = "";
 	while (defined (my $line = <$file>)) {
 		unless($line =~ /^\s*$/) {
-		#	print STDOUT $line;
 			chomp($line);
 			ltrim($line);
 			my @words = split /\s+/, $line;
-#			print STDOUT "\n----";
-#			for (my $i = 0; $i < @words; ++$i){
-#				print "$i: ";
-#				print STDOUT $words[$i];
-#				print "--";
-#			}
-			#print "\n";
+
+			#first check if comment
+			#then check if macro
+			#then check if target
 			if($words[0] ne "#"){
+				if($words[1] eq "="){
+					my @macroTest = @words[2 .. $#words];
+					my $macroString = join ' ', @macroTest;
+					$macros{$words[0]}= $macroString;
+#					print STDOUT "Macros for $words[0] are $macros{$words[0]}\n"; 
+				}
 				if($words[1] eq ":"){
-					#print STDOUT "here 3";	
+					#target could be a macro, if first char of words[0] is $ then look up macro and update words[0]
 					if (@words > 2){
 						my @test = @words[2 .. $#words];
-						#for (my $k = 0; $k < @test; ++$k){
-                                                #       print STDOUT "$k: $test[$k], ";
-						#}
+						for (my $i = 0; $i < @test; ++$i){
+							$test[$i] = getMacros($test[$i]);
+						}
 						my $testString = join ' ',@test;
-						#print STDOUT "Joined string: $testString \n";
-						#print STDOUT "\n";
-						#print STDOUT "storing this to hash tbl: $words[0]";
-						$targets{$words[0]} = $testString;		
-                                         	#print STDOUT "targets: $targets{$words[0]}"; 
+						#$targets{$words[0]} = $testString;		 
+						$targets{getMacros($words[0])} =$testString; 
+					}
+					if ($default eq ""){
+						$default = getMacros($words[0]);
 					}
 					my $nextline = <$file>;
 					chomp($nextline);
@@ -118,27 +186,21 @@ for my $targetName ($ARGV[0]) {
 					while (not ($nextline =~ /^\s*$/)){
 					#print STDOUT "nextline is: $nextline\n";
 						if (not(defined($commands{$words[0]}))){
-							$commands{$words[0]} = $nextline;
+							$commands{getMacros($words[0])} = $nextline;
 						}else{
-							$commands{$words[0]} = $commands{$words[0]}."\n".$nextline; 
+							$commands{getMacros($words[0])} = $commands{$words[0]}."\n".$nextline; 
 						}
 						$nextline = <$file>;
 					}
 				}
 			}
-		#	print ($line, "\n");
 		}
-	}
-	# /\s+/ one or more whitespace.. 		
-	# #if words[0] is # ignore line 	
+	}	
 	close $file;	
-	#print STDOUT $targetName;
-	makeTarget $targetName;	
+	if (defined ($targetName)){
+		makeTarget $targetName;	
+	}else{
+		makeTarget $default;
+	}
 }
-#read lines while defined,
-#if line compare to whitespace is true, ignore
-#if trimmed and substring(0,1) = # OR use split string and check a[0], ignore
 
-
-#MACROS
-#	makeTarget $targetName; 
