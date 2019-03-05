@@ -42,14 +42,14 @@ sub getMacros{
 			}
 	#		print STDOUT "\nafter hash: $macroNames[$i]\n";
 		}
-		my $output;
+		my $output = "";
 		if (defined ($macroNames[0])){
 #			print STDOUT "first item is: $macroNames[0]---\n";	
 			$output = join ' ', @macroNames;
+		}else{
+			return $input;
 		}
-else{
-		return $input;
-		}
+#		print STDOUT "output is: $output--\n";
 		my $finished = $output;
 		$finished =~ /{+/;
 	#	print STDOUT "finished getting macro, output: $finished\n";
@@ -83,36 +83,23 @@ sub makeTarget{
 	}
 	else{
 		@prereqs = split " ",$targets{$target};
-		#loop through prereq array
-#		for(my $i =0; $i<  @prereqs; ++$i){
-#			print STDOUT "prereq at $i is: $prereqs[$i]\n";
-#		 	$prereqs[$i] = getMacros($prereqs[$i]);
-#			print STDOUT "prereq after getMacro is: $prereqs[$i] \n";
-			#if get macros returns a list of macros, when to split?
 			
-#		}
 	}
 	
 	if($prereqsExist){
 		for (my $j = 0; $j < @prereqs ; ++$j){
-	#		print STDOUT "looping through prereqs \n";
-		#check if prereq is a file by checking the target hash
 			if (-e $prereqs[$j]){
 				my $fileTime = mtime ($prereqs[$j]);
 				my $targetTime = mtime ($target);
 				if (defined ($targetTime)){
 					if ($fileTime > $targetTime){
-	#					print STDOUT "heerererrern\n";
 						
 					}else{
-	#					print STDOUT "2918390128390123\n";
 					#	makeTarget($prereqs[$j]);
 						#throw an error, target obsolete
 					}
 				}else{
-#					print STDOUT "$target does not exist\n";
 				#	makeTarget($prereqs[$j]);
-	#				print STDOUT "$target does not exist\n";
 				}			
 			}else{
 				print STDOUT "calling makeTarget for: $prereqs[$j]\n";
@@ -132,8 +119,12 @@ sub makeTarget{
 	for (my $i = 0; $i < @execute ; ++$i){
 		my @parseExecute = split /\s+/ ,$execute[$i];
         	for(my $j =0; $j <@parseExecute; ++$j){
-                	$parseExecute[$j] = getMacros($parseExecute[$j]);
-        	}
+			if($parseExecute[$j] =~ /.\//){
+				$parseExecute[$j] = "./".getMacros(substr $parseExecute[$j], 2);
+			}else{
+                		$parseExecute[$j] = getMacros($parseExecute[$j]);
+        		}
+		}
         	my $afterMacrosWord = join ' ', @parseExecute;
         	my $wor = ltrim($afterMacrosWord);
         	my @newExecute = split /\s+/, $wor;

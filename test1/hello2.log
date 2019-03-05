@@ -1,1 +1,2 @@
-gcc hello.c -o hello 
+give make target
+gcc hello.c -o hello
